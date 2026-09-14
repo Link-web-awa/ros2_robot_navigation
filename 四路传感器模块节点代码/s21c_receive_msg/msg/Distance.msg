@@ -1,0 +1,6 @@
+float32 a_distance
+float32 b_distance
+float32 c_distance
+float32 d_distance
+float32 e_distance
+float32 f_distance
