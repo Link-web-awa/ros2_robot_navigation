@@ -14,7 +14,10 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             "chassis_device",
-            default_value="/dev/ttyACM1",
+            default_value=(
+                "/dev/serial/by-id/"
+                "usb-1a86_USB_Single_Serial_5A6D002531-if00"
+            ),
             description="Serial device used by the chassis controller",
         ),
         DeclareLaunchArgument(
@@ -24,7 +27,10 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "s21c_port",
-            default_value="/dev/ttyACM0",
+            default_value=(
+                "/dev/serial/by-id/"
+                "usb-1a86_USB_Single_Serial_597B022936-if00"
+            ),
             description="Serial device used by the S21C sensor module",
         ),
         DeclareLaunchArgument(
