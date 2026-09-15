@@ -79,17 +79,6 @@ public:
     }
     timer_ = create_wall_timer(
       std::chrono::milliseconds(5), [this]() {read_serial();});
-  //   test_timer_ = create_wall_timer(
-  //     std::chrono::milliseconds(100),
-  //     [this]() {
-  //       geometry_msgs::msg::Twist test_command;
-  //       test_command.linear.x = 0.0;
-  //       test_command.linear.y = 0.0;
-  //       test_command.angular.z = 0.0;
-  //       send_command(test_command);
-  //       RCLCPP_WARN(get_logger(), "Test mode: sending linear.x=%f m/s at 10 Hz", static_cast<double>(test_command.linear.x));
-  //     });
-  //   RCLCPP_INFO(get_logger(), "Serial car interface ready: %s at %d baud", device_.c_str(), baud_rate_);
   }
 
   ~ChassisCommunicationNode() override
@@ -150,6 +139,12 @@ private:
 
   void send_command(const geometry_msgs::msg::Twist & cmd)
   {
+    RCLCPP_WARN(
+    get_logger(),
+    "Sending command: x=%f, y=%f, z=%f",
+    cmd.linear.x,
+    cmd.linear.y,
+    cmd.angular.z);
     if (serial_fd_ < 0) {
       return;
     }
@@ -214,12 +209,6 @@ private:
       velocity.linear.y = read_i16_be(rx_buffer_[4], rx_buffer_[5]) / 1000.0;
       velocity.angular.z = read_i16_be(rx_buffer_[6], rx_buffer_[7]) / 1000.0;
       velocity_pub_->publish(velocity);
-      
-      //打印接收到的x,y,z的速度
-      RCLCPP_INFO(get_logger(), "Received command: linear.x=%f, linear.y=%f, angular.z=%f",
-      static_cast<double>(velocity.linear.x),
-      static_cast<double>(velocity.linear.y),
-      static_cast<double>(velocity.angular.z));
 
       std_msgs::msg::Int16MultiArray imu;
       imu.data = {
