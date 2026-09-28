@@ -7,10 +7,11 @@
 #include <cmath>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
-#include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/float64.hpp"
 #include "std_msgs/msg/int16_multi_array.hpp"
 
 namespace
@@ -31,7 +32,8 @@ public:
   : Node("heading_controller")
   {
     imu_topic_ = declare_parameter<std::string>("imu_topic", "/car/imu_raw");
-    cmd_vel_topic_ = declare_parameter<std::string>("cmd_vel_topic", "/cmd_vel");
+    angular_z_topic_ =
+      declare_parameter<std::string>("angular_z_topic", "/heading_controller/angular_z");
     gyro_full_scale_dps_ = declare_parameter<double>("gyro_full_scale_dps", 500.0);
     calibration_samples_ = declare_parameter<int>("calibration_samples", 200);
     kp_ = declare_parameter<double>("kp", 1.5);
@@ -50,7 +52,7 @@ public:
               "positive; integral_limit and yaw_tolerance must be non-negative");
     }
 
-    cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(cmd_vel_topic_, 10);
+    angular_z_pub_ = create_publisher<std_msgs::msg::Float64>(angular_z_topic_, 10);
     imu_sub_ = create_subscription<std_msgs::msg::Int16MultiArray>(
       imu_topic_, rclcpp::SensorDataQoS(),
       std::bind(&HeadingController::imu_callback, this, std::placeholders::_1));
@@ -62,8 +64,8 @@ public:
 
   ~HeadingController() override
   {
-    if (cmd_vel_pub_) {
-      cmd_vel_pub_->publish(geometry_msgs::msg::Twist{});
+    if (angular_z_pub_) {
+      angular_z_pub_->publish(std_msgs::msg::Float64{});
     }
   }
 
@@ -121,13 +123,13 @@ private:
 
   void publish_command(double angular_z)
   {
-    geometry_msgs::msg::Twist command;
-    command.angular.z = angular_z;
-    cmd_vel_pub_->publish(command);
+    std_msgs::msg::Float64 command;
+    command.data = angular_z;
+    angular_z_pub_->publish(command);
   }
 
   std::string imu_topic_;
-  std::string cmd_vel_topic_;
+  std::string angular_z_topic_;
   double gyro_full_scale_dps_{500.0};
   int calibration_samples_{200};
   double kp_{1.5};
@@ -146,7 +148,7 @@ private:
   rclcpp::Time previous_time_{0, 0, RCL_ROS_TIME};
 
   rclcpp::Subscription<std_msgs::msg::Int16MultiArray>::SharedPtr imu_sub_;
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr angular_z_pub_;
 };
 
 int main(int argc, char ** argv)

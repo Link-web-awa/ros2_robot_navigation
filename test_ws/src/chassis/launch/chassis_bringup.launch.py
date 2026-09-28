@@ -71,7 +71,7 @@ def generate_launch_description():
             output="screen",
             parameters=[{
                 "imu_topic": imu_topic,
-                "cmd_vel_topic": "/cmd_vel",
+                "angular_z_topic": "/heading_controller/angular_z",
                 "gyro_full_scale_dps": 500.0,
                 "calibration_samples": 200,
                 "kp": 1.5,
@@ -80,6 +80,20 @@ def generate_launch_description():
                 "max_angular_velocity": 1.0,
                 "integral_limit": 0.5,
                 "yaw_tolerance": 0.01,
+            }],
+        ),
+        Node(
+            package="chassis",
+            executable="cmd_vel_aggregator",
+            name="cmd_vel_aggregator",
+            output="screen",
+            parameters=[{
+                "base_command_topic": "/cmd_vel_input",
+                "angular_z_topic": "/heading_controller/angular_z",
+                "output_topic": "/cmd_vel",
+                "publish_rate": 50.0,
+                "base_command_timeout": 0.5,
+                "angular_z_timeout": 0.5,
             }],
         ),
     ])

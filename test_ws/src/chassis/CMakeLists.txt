@@ -16,9 +16,13 @@ ament_target_dependencies(chassis_communication rclcpp geometry_msgs std_msgs)
 
 add_executable(heading_controller src/heading_controller.cpp)
 target_compile_features(heading_controller PUBLIC cxx_std_17)
-ament_target_dependencies(heading_controller rclcpp geometry_msgs std_msgs)
+ament_target_dependencies(heading_controller rclcpp std_msgs)
 
-install(TARGETS chassis_communication heading_controller
+add_executable(cmd_vel_aggregator src/cmd_vel_aggregator.cpp)
+target_compile_features(cmd_vel_aggregator PUBLIC cxx_std_17)
+ament_target_dependencies(cmd_vel_aggregator rclcpp geometry_msgs std_msgs)
+
+install(TARGETS chassis_communication heading_controller cmd_vel_aggregator
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch
