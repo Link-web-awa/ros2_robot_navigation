@@ -22,7 +22,15 @@ add_executable(cmd_vel_aggregator src/cmd_vel_aggregator.cpp)
 target_compile_features(cmd_vel_aggregator PUBLIC cxx_std_17)
 ament_target_dependencies(cmd_vel_aggregator rclcpp geometry_msgs std_msgs)
 
-install(TARGETS chassis_communication heading_controller cmd_vel_aggregator
+add_executable(keyboard_teleop src/keyboard_teleop.cpp)
+target_compile_features(keyboard_teleop PUBLIC cxx_std_17)
+ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs)
+
+install(TARGETS
+  chassis_communication
+  heading_controller
+  cmd_vel_aggregator
+  keyboard_teleop
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch
