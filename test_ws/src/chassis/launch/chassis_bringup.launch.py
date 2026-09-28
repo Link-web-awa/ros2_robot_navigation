@@ -49,6 +49,12 @@ def generate_launch_description():
             }],
         ),
         Node(
+            package="chassis",
+            executable="wheel_odom",
+            name="wheel_odom",
+            output="screen",
+        ),
+        Node(
             package="s21c_receive_data",
             executable="s21c_listener",
             name="s21c_listener",
