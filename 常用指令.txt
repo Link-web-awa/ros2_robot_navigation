@@ -1,0 +1,107 @@
+==============================
+第一个终端:(启动底盘)
+ssh nongzhuang256@10.43.0.1
+cd ~/C30D_project/test_ws
+source /opt/ros/humble/setup.bash
+ros2 launch chassis chassis_bringup.launch.py
+
+第二个终端:(启动控制键盘)
+ssh nongzhuang256@10.43.0.1
+cd ~/C30D_project/test_ws
+source /opt/ros/humble/setup.bash
+ros2 run chassis keyboard_teleop --ros-args -p linear_speed:=0.5
+
+
+==================== 树莓派 SSH ====================
+
+# 将“树莓派IP”替换成实际地址
+ssh nongzhuang256@树莓派IP
+
+# 查看当前电脑的 IP
+ip addr
+
+# 在树莓派本机查看 IP
+hostname -I
+
+
+==================== 进入工作空间 ====================
+
+cd ~/C30D_project/test_ws
+
+
+==================== 加载 ROS 2 环境 ====================
+
+# 每个新终端都需要执行
+source /opt/ros/humble/setup.bash
+source ~/C30D_project/test_ws/install/setup.bash
+
+
+==================== 编译工程 ====================
+
+cd ~/C30D_project/test_ws
+source /opt/ros/humble/setup.bash
+colcon build
+source install/setup.bash
+
+# 只编译 chassis 包
+colcon build --packages-select chassis
+
+# 遇到跨电脑复制导致的构建目录错误时，确认位于工作空间后再执行
+rm -rf ./build ./install ./log
+colcon build
+
+
+==================== 启动底盘系统 ====================
+
+# 终端 1：启动底盘、传感器、航向控制和速度融合节点
+cd ~/C30D_project/test_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch chassis chassis_bringup.launch.py
+
+# 启动后保持车身静止，等待日志：
+# Gyro calibrated: z bias = ... raw; relative heading locked at zero
+
+
+==================== 启动键盘控制 ====================
+
+# 终端 2：通过 SSH 键盘控制小车
+cd ~/C30D_project/test_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 run chassis keyboard_teleop
+
+# 低速测试
+ros2 run chassis keyboard_teleop --ros-args -p linear_speed:=0.1
+
+# 按键：
+# W / ↑：前进
+# S / ↓：后退
+# A / ←：左移
+# D / →：右移
+# 空格：停止
+# Q：停止并退出
+
+
+==================== 常用 ROS 2 检查 ====================
+
+ros2 node list
+ros2 topic list -t
+ros2 topic echo /cmd_vel
+ros2 topic echo /cmd_vel_input
+ros2 topic echo /heading_controller/angular_z
+ros2 topic echo /car/imu_raw
+
+# 查看话题连接关系
+ros2 topic info /cmd_vel -v
+ros2 topic info /heading_controller/angular_z -v
+
+# 查看 chassis 包提供的可执行程序
+ros2 pkg executables chassis
+
+
+==================== 手动测试平移 ====================
+
+# 不要直接向 /cmd_vel 发布；应向融合节点输入 /cmd_vel_input 发布
+ros2 topic pub --rate 10 /cmd_vel_input geometry_msgs/msg/Twist "{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
+
