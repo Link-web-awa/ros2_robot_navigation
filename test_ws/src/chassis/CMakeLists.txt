@@ -14,7 +14,11 @@ add_executable(chassis_communication src/chassis_communication.cpp)
 target_compile_features(chassis_communication PUBLIC cxx_std_17)
 ament_target_dependencies(chassis_communication rclcpp geometry_msgs std_msgs)
 
-install(TARGETS chassis_communication
+add_executable(heading_controller src/heading_controller.cpp)
+target_compile_features(heading_controller PUBLIC cxx_std_17)
+ament_target_dependencies(heading_controller rclcpp geometry_msgs std_msgs)
+
+install(TARGETS chassis_communication heading_controller
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch
