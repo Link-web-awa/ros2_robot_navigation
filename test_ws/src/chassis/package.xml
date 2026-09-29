@@ -12,6 +12,8 @@
   <depend>geometry_msgs</depend>
   <depend>std_msgs</depend>
 
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>s21c_receive_data</exec_depend>
