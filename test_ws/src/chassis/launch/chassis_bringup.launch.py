@@ -41,8 +41,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "imu_topic",
-            default_value="/car/imu_raw",
-            description="Raw six-axis Int16MultiArray topic used for heading hold",
+            default_value="/car/imu",
+            description="Processed sensor_msgs/Imu topic used for heading hold",
         ),
         Node(
             package="chassis",
@@ -66,14 +66,26 @@ def generate_launch_description():
         ),
         Node(
             package="chassis",
+            executable="imu_processor",
+            name="imu_processor",
+            output="screen",
+            parameters=[{
+                "raw_topic": "/car/imu_raw",
+                "imu_topic": imu_topic,
+                "frame_id": "imu_link",
+                "accel_full_scale_g": 2.0,
+                "gyro_full_scale_dps": 500.0,
+                "calibration_samples": 200,
+            }],
+        ),
+        Node(
+            package="chassis",
             executable="heading_controller",
             name="heading_controller",
             output="screen",
             parameters=[{
                 "imu_topic": imu_topic,
                 "angular_z_topic": "/heading_controller/angular_z",
-                "gyro_full_scale_dps": 500.0,
-                "calibration_samples": 200,
                 "kp": 1.5,
                 "ki": 0.0,
                 "kd": 0.1,
