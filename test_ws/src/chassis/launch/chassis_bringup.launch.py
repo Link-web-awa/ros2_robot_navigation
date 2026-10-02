@@ -80,32 +80,14 @@ def generate_launch_description():
         ),
         Node(
             package="chassis",
-            executable="heading_controller",
-            name="heading_controller",
-            output="screen",
-            parameters=[{
-                "imu_topic": imu_topic,
-                "angular_z_topic": "/heading_controller/angular_z",
-                "kp": 1.5,
-                "ki": 0.0,
-                "kd": 0.1,
-                "max_angular_velocity": 1.0,
-                "integral_limit": 0.5,
-                "yaw_tolerance": 0.01,
-            }],
-        ),
-        Node(
-            package="chassis",
             executable="cmd_vel_aggregator",
             name="cmd_vel_aggregator",
             output="screen",
             parameters=[{
                 "base_command_topic": "/cmd_vel_input",
-                "angular_z_topic": "/heading_controller/angular_z",
                 "output_topic": "/cmd_vel",
                 "publish_rate": 50.0,
                 "base_command_timeout": 0.5,
-                "angular_z_timeout": 0.5,
             }],
         ),
     ])

@@ -15,10 +15,6 @@ add_executable(chassis_communication src/chassis_communication.cpp)
 target_compile_features(chassis_communication PUBLIC cxx_std_17)
 ament_target_dependencies(chassis_communication rclcpp geometry_msgs std_msgs)
 
-add_executable(heading_controller src/heading_controller.cpp)
-target_compile_features(heading_controller PUBLIC cxx_std_17)
-ament_target_dependencies(heading_controller rclcpp sensor_msgs std_msgs)
-
 add_executable(imu_processor src/imu_processor.cpp)
 target_compile_features(imu_processor PUBLIC cxx_std_17)
 ament_target_dependencies(imu_processor rclcpp sensor_msgs std_msgs)
@@ -34,7 +30,6 @@ ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs)
 install(TARGETS
   chassis_communication
   imu_processor
-  heading_controller
   cmd_vel_aggregator
   keyboard_teleop
   DESTINATION lib/${PROJECT_NAME})
