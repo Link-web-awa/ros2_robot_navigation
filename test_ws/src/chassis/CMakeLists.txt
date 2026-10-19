@@ -8,15 +8,16 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 add_executable(chassis_communication src/chassis_communication.cpp)
 target_compile_features(chassis_communication PUBLIC cxx_std_17)
 ament_target_dependencies(chassis_communication rclcpp geometry_msgs std_msgs)
 
-add_executable(heading_controller src/heading_controller.cpp)
-target_compile_features(heading_controller PUBLIC cxx_std_17)
-ament_target_dependencies(heading_controller rclcpp std_msgs)
+add_executable(imu_processor src/imu_processor.cpp)
+target_compile_features(imu_processor PUBLIC cxx_std_17)
+ament_target_dependencies(imu_processor rclcpp sensor_msgs std_msgs)
 
 add_executable(cmd_vel_aggregator src/cmd_vel_aggregator.cpp)
 target_compile_features(cmd_vel_aggregator PUBLIC cxx_std_17)
@@ -28,7 +29,7 @@ ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs)
 
 install(TARGETS
   chassis_communication
-  heading_controller
+  imu_processor
   cmd_vel_aggregator
   keyboard_teleop
   DESTINATION lib/${PROJECT_NAME})
